@@ -1,0 +1,36 @@
+---
+import Prose from '../layouts/Prose.astro';
+import { site } from '../data/site';
+---
+
+<Prose title="Mentions légales" description="Éditeur, hébergement et vente des produits Saina Studio." updated="26 novembre 2026">
+	<h2>Éditeur</h2>
+	<p>
+		Ce site est édité par <strong>{site.author}</strong>, développeur indépendant à Antananarivo (Madagascar), sous le nom
+		commercial Saina Studio. Contact : <a href={`mailto:${site.email}`}>{site.email}</a>.
+	</p>
+	<p>Directeur de la publication : {site.author}.</p>
+
+	<h2>Hébergement</h2>
+	<p>Netlify, Inc., 101 2nd Street, Suite 575, San Francisco, CA 94105, États-Unis.</p>
+
+	<h2>Vente des licences</h2>
+	<p>
+		Les licences sont vendues par Freemius, Inc., qui agit comme revendeur : il encaisse les paiements, émet les factures
+		et reverse la TVA due. Les conditions de vente et la politique de remboursement de 14 jours sont présentées lors du
+		paiement.
+	</p>
+
+	<h2>Données personnelles</h2>
+	<p>
+		Le site n’utilise ni cookie publicitaire ni outil de mesure d’audience. L’adresse saisie dans le formulaire de la
+		lettre sert uniquement à prévenir de la sortie d’un nouveau kit ; elle est stockée chez Netlify. Pour la consulter ou
+		la supprimer, écrivez à <a href={`mailto:${site.email}`}>{site.email}</a>.
+	</p>
+
+	<h2>Propriété intellectuelle</h2>
+	<p>
+		Le code des extensions Saina est distribué sous licence GPL v2 ou ultérieure. Les textes, la marque et les maquettes de
+		ce site restent la propriété de leur auteur.
+	</p>
+</Prose>

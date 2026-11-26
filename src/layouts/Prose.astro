@@ -1,0 +1,97 @@
+---
+import Base from './Base.astro';
+
+interface Props {
+	title: string;
+	description: string;
+	updated?: string;
+}
+const { title, description, updated } = Astro.props;
+---
+
+<Base title={title} description={description}>
+	<article class="wrap prose">
+		<h1 class="h-1">{title}</h1>
+		{updated && <p class="label updated">Mise à jour : {updated}</p>}
+		<slot />
+	</article>
+</Base>
+
+<style>
+	.prose {
+		max-width: calc(48rem + 2 * var(--sn-space-gutter));
+		padding-top: clamp(4rem, 2rem + 6vw, 7rem);
+	}
+
+	.updated {
+		margin-top: 1.25rem;
+	}
+
+	.prose :global(h2) {
+		margin-top: 3.5rem;
+		font-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.25rem);
+		font-weight: 600;
+		letter-spacing: -0.03em;
+		line-height: 1.1;
+	}
+
+	.prose :global(h3) {
+		margin-top: 2rem;
+		font-size: var(--sn-text-xl);
+		font-weight: 500;
+	}
+
+	.prose :global(p),
+	.prose :global(ul) {
+		margin-top: 1rem;
+		color: var(--sn-color-text-muted);
+		line-height: 1.65;
+	}
+
+	.prose :global(strong) {
+		color: var(--sn-color-text-primary);
+		font-weight: 500;
+	}
+
+	.prose :global(li + li) {
+		margin-top: 0.4rem;
+	}
+
+	.prose :global(a) {
+		color: var(--sn-color-text-primary);
+		text-underline-offset: 0.25em;
+	}
+
+	.prose :global(.table-scroll) {
+		margin-top: 1.5rem;
+		overflow-x: auto;
+	}
+
+	.prose :global(table) {
+		width: 100%;
+		min-width: 34rem;
+		border-collapse: collapse;
+		font-size: var(--sn-text-sm);
+	}
+
+	.prose :global(th),
+	.prose :global(td) {
+		padding: 0.75rem 1rem 0.75rem 0;
+		border-top: 1px solid var(--sn-color-border-default);
+		text-align: left;
+		vertical-align: top;
+	}
+
+	.prose :global(thead th) {
+		font-family: var(--sn-font-mono);
+		font-size: var(--sn-text-xs);
+		font-weight: 400;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--sn-color-text-muted);
+	}
+
+	.prose :global(td) {
+		color: var(--sn-color-text-muted);
+	}
+</style>

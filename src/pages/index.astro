@@ -1,0 +1,390 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Title from '../components/Title.astro';
+import DemoPreview from '../components/DemoPreview.astro';
+import { site } from '../data/site';
+
+const kits = (await getCollection('kits')).sort((a, b) => a.data.order - b.data.order);
+const featured = kits.filter((k) => k.data.status === 'available');
+const upcoming = kits.filter((k) => k.data.status === 'upcoming');
+
+const rules = [
+	{
+		title: 'Accessible avant d’être joli.',
+		text: 'Clavier, lecteur d’écran, contrastes, zoom : chaque bloc passe l’audit avant d’être dessiné en détail. La déclaration d’accessibilité est publiée avec le kit.',
+	},
+	{
+		title: 'Le même kit, de Figma au code.',
+		text: 'Les variables Figma portent les noms des propriétés CSS. Ce que le designer valide est ce que le développeur livre.',
+	},
+	{
+		title: 'Gratuit d’abord.',
+		text: 'Chaque kit a une version gratuite, complète et utilisable sur un vrai site. La version Pro ajoute des blocs, jamais de verrou.',
+	},
+];
+---
+
+<Base
+	title="Saina Studio"
+	description="Kits WordPress et Figma accessibles, conçus pour le RGAA et les WCAG 2.2 AA. Blocs Gutenberg gratuits et Pro pour freelances et agences."
+	current="Kits"
+>
+	<section class="hero wrap" aria-labelledby="home-title">
+		<Title as="h1" id="home-title" class="h-display" text={'Des kits WordPress\nqui n’oublient personne.'} accent="personne." />
+		<div class="hero-row">
+			<p class="lead" data-reveal="0.15">
+				Saina Studio conçoit des blocs Gutenberg et leurs maquettes Figma, accessibles dès la première ligne de code. Pour
+				les freelances et les agences qui livrent des sites à des clients pressés.
+			</p>
+			<div class="btn-row" data-reveal="0.25">
+				<a class="btn btn--light" href="#catalogue">Voir les kits</a>
+				<a class="btn btn--ghost" href="/kits/saina-blocks/#tarifs">Version gratuite</a>
+			</div>
+		</div>
+	</section>
+
+	<section class="wrap catalogue" id="catalogue" aria-labelledby="catalogue-title">
+		<div class="cat-head">
+			<h2 id="catalogue-title" class="label">Catalogue</h2>
+			<p class="label">{featured.length} kit disponible · {upcoming.length} en préparation</p>
+		</div>
+
+		{
+			featured.map((kit) => (
+				<article class="feature glass" aria-labelledby={`kit-${kit.id}`} data-reveal>
+					{kit.data.preview && <DemoPreview preview={kit.data.preview} compact />}
+					<div class="feature-info">
+						<p class="label status">
+							<span class="dot" aria-hidden="true" />
+							Disponible{kit.data.version && ` · v${kit.data.version}`}
+						</p>
+						<h3 id={`kit-${kit.id}`} class="feature-name">{kit.data.name}</h3>
+						<p class="muted">{kit.data.summary}</p>
+						<dl class="facts">
+							{kit.data.facts.map((f) => (
+								<div>
+									<dt class="label">{f.label}</dt>
+									<dd>{f.value}</dd>
+								</div>
+							))}
+						</dl>
+						<div class="btn-row">
+							<a class="btn btn--light" href={`/kits/${kit.id}/`}>
+								Découvrir<span class="visually-hidden"> {kit.data.name}</span>
+							</a>
+							{kit.data.demoUrl && (
+								<a class="btn btn--ghost" href={kit.data.demoUrl}>
+									Démo ↗
+								</a>
+							)}
+						</div>
+					</div>
+				</article>
+			))
+		}
+
+		<ul class="upcoming" role="list">
+			{
+				upcoming.map((kit) => (
+					<li class="outlined">
+						<p class="label status">
+							<span class="dot is-off" aria-hidden="true" />
+							En préparation
+						</p>
+						<h3>{kit.data.name}</h3>
+						<p class="muted">{kit.data.summary}</p>
+					</li>
+				))
+			}
+		</ul>
+	</section>
+
+	<section class="section is-cream" aria-labelledby="rules-title">
+		<div class="wrap split">
+			<Title id="rules-title" class="h-2" text={'Trois règles\npour chaque kit.'} accent="règles" />
+			<ul class="rules" role="list">
+				{
+					rules.map((r) => (
+						<li class="rule-top" data-reveal>
+							<h3 class="h-3">{r.title}</h3>
+							<p class="muted">{r.text}</p>
+						</li>
+					))
+				}
+			</ul>
+		</div>
+	</section>
+
+	<section class="section" aria-labelledby="studio-title">
+		<div class="wrap split split--center">
+			<aside class="author glass" aria-label="L’auteur" data-reveal>
+				<div class="portrait" aria-hidden="true"></div>
+				<p class="author-name">{site.author}</p>
+				<p class="label">Développeur front-end · Antananarivo</p>
+				<dl class="facts">
+					<div><dt class="label">Expérience</dt><dd>12 ans, plus de 50 sites livrés</dd></div>
+					<div><dt class="label">Spécialité</dt><dd>WordPress, Figma, accessibilité</dd></div>
+					<div><dt class="label">Fuseau</dt><dd>UTC+3, réponse sous 48 h</dd></div>
+				</dl>
+			</aside>
+			<div class="studio-text">
+				<Title id="studio-title" class="h-2" text={'Un studio d’une personne,\net c’est voulu.'} accent="une personne" />
+				<p class="lead">
+					Saina veut dire « esprit » en malgache. Le studio est né de douze ans de sites WordPress livrés pour des agences
+					en France et au Canada, et d’un constat : l’accessibilité arrive presque toujours trop tard dans un projet. Les
+					kits Saina la mettent au début.
+				</p>
+			</div>
+		</div>
+	</section>
+
+	<section class="section wrap newsletter" id="lettre" aria-labelledby="news-title">
+		<Title id="news-title" class="h-1 center" text={'Un e-mail à chaque nouveau kit.\nRien d’autre.'} accent="Rien d’autre." />
+		<form class="news-form glass" name="lettre" method="POST" action="/merci/" data-netlify="true" netlify-honeypot="site-web">
+			<input type="hidden" name="form-name" value="lettre" />
+			<p class="visually-hidden">
+				<label>Ne pas remplir : <input name="site-web" tabindex="-1" autocomplete="off" /></label>
+			</p>
+			<label class="visually-hidden" for="news-email">Votre adresse e-mail</label>
+			<input id="news-email" name="email" type="email" required autocomplete="email" placeholder="Votre adresse e-mail" />
+			<button class="btn btn--light" type="submit">S’inscrire</button>
+		</form>
+		<p class="label news-note">Un à deux e-mails par trimestre · Désinscription en un clic</p>
+	</section>
+</Base>
+
+<style>
+	.hero {
+		display: grid;
+		gap: 2.5rem;
+		padding-top: clamp(4.5rem, 2rem + 8vw, 10rem);
+	}
+
+	.hero-row {
+		display: grid;
+		gap: 2rem;
+		align-items: end;
+	}
+
+	@media (min-width: 60rem) {
+		.hero-row {
+			grid-template-columns: 1fr auto;
+		}
+	}
+
+	.catalogue {
+		display: grid;
+		gap: 1.25rem;
+		padding-top: clamp(5rem, 3rem + 5vw, 7.5rem);
+		padding-bottom: 0;
+	}
+
+	.cat-head {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: 0.5rem 2rem;
+		margin-bottom: 0.75rem;
+	}
+
+	.cat-head h2 {
+		font-weight: 400;
+	}
+
+	.feature {
+		display: grid;
+		gap: 0;
+		padding: 0.75rem;
+		border-radius: 1.75rem;
+	}
+
+	.feature :global(.browser) {
+		padding: 0;
+		border: 0;
+		background: none;
+		backdrop-filter: none;
+	}
+
+	@media (min-width: 60rem) {
+		.feature {
+			grid-template-columns: 1.4fr 1fr;
+		}
+	}
+
+	.feature-info {
+		display: grid;
+		align-content: start;
+		gap: 1.25rem;
+		padding: 1.75rem 1.25rem 1.25rem;
+	}
+
+	@media (min-width: 60rem) {
+		.feature-info {
+			padding: 1.75rem 2rem 1.75rem 2.5rem;
+		}
+	}
+
+	.feature-name {
+		font-size: clamp(2rem, 1.6rem + 1.4vw, 2.75rem);
+		font-weight: 600;
+		letter-spacing: -0.03em;
+		line-height: 1;
+	}
+
+	.status {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.dot {
+		width: 0.45rem;
+		aspect-ratio: 1;
+		border-radius: 50%;
+		background: var(--sn-color-status-ok);
+	}
+
+	.dot.is-off {
+		background: var(--sn-color-text-muted);
+		opacity: 0.5;
+	}
+
+	.facts div {
+		display: grid;
+		grid-template-columns: 6.5rem 1fr;
+		gap: 1rem;
+		padding-block: 0.75rem;
+		border-top: 1px solid var(--sn-color-border-default);
+		font-size: var(--sn-text-sm);
+	}
+
+	.facts dd {
+		margin: 0;
+	}
+
+	.upcoming {
+		display: grid;
+		gap: 1.25rem;
+		padding: 0;
+		list-style: none;
+	}
+
+	@media (min-width: 48rem) {
+		.upcoming {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+
+	.upcoming li {
+		display: grid;
+		gap: 0.4rem;
+		padding: 1.75rem;
+	}
+
+	.upcoming .status {
+		margin-bottom: 2.5rem;
+	}
+
+	.upcoming h3 {
+		font-size: var(--sn-text-h3);
+		font-weight: 500;
+		letter-spacing: -0.02em;
+	}
+
+	.upcoming li p:last-child {
+		font-size: var(--sn-text-sm);
+	}
+
+	.rules {
+		padding: 0;
+		list-style: none;
+	}
+
+	.rules li {
+		display: grid;
+		gap: 0.75rem 3rem;
+		padding-block: 2rem;
+	}
+
+	@media (min-width: 48rem) {
+		.rules li {
+			grid-template-columns: 18rem 1fr;
+		}
+	}
+
+	.author {
+		display: grid;
+		gap: 0.25rem;
+		padding: 2rem;
+		border-radius: 1.75rem;
+	}
+
+	.portrait {
+		width: 5.5rem;
+		aspect-ratio: 1;
+		margin-bottom: 1.25rem;
+		border-radius: 50%;
+		background: #33493d;
+	}
+
+	.author-name {
+		font-size: var(--sn-text-xl);
+		font-weight: 500;
+	}
+
+	.author .facts {
+		margin-top: 1.25rem;
+	}
+
+	.studio-text {
+		display: grid;
+		gap: 1.5rem;
+	}
+
+	@media (min-width: 60rem) {
+		.studio-text .lead {
+			max-width: none;
+		}
+	}
+
+	.newsletter {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		justify-items: center;
+		gap: 2rem;
+		padding-bottom: 2rem;
+	}
+
+	.news-form {
+		display: flex;
+		gap: 0.5rem;
+		width: min(100%, 33rem);
+		padding: 0.375rem;
+		border-radius: var(--sn-radius-pill);
+	}
+
+	.news-form input[type='email'] {
+		flex: 1;
+		min-width: 0;
+		padding: 0 1.25rem;
+		border: 0;
+		background: none;
+	}
+
+	.news-form input[type='email']::placeholder {
+		color: var(--sn-color-text-muted);
+		opacity: 1;
+	}
+
+	.news-form input[type='email']:focus-visible {
+		outline-offset: 0;
+		border-radius: var(--sn-radius-pill);
+	}
+
+	.news-note {
+		text-transform: none;
+		letter-spacing: 0.02em;
+		text-align: center;
+	}
+</style>

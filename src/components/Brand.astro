@@ -1,0 +1,29 @@
+---
+interface Props {
+	size?: 'md' | 'lg';
+}
+const { size = 'md' } = Astro.props;
+---
+
+<span class:list={['brand', `brand--${size}`]}>Saina <span class="accent">studio</span></span>
+
+<style>
+	.brand {
+		font-weight: 600;
+		letter-spacing: -0.02em;
+		white-space: nowrap;
+	}
+
+	.brand .accent {
+		font-weight: 400;
+		font-size: 1.1em;
+	}
+
+	.brand--md {
+		font-size: 1.125rem;
+	}
+
+	.brand--lg {
+		font-size: 1.375rem;
+	}
+</style>

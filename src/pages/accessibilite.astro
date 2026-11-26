@@ -1,0 +1,144 @@
+---
+import Prose from '../layouts/Prose.astro';
+import { site } from '../data/site';
+
+const results = [
+	['1.1.1 Contenu non textuel', 'Respecté (dépend du site)', 'Chaque image a un attribut alt ; le texte alternatif saisi reste à la charge du rédacteur'],
+	['1.3.1 Information et relations', 'Respecté', 'Un seul H1, aucun niveau sauté, sections nommées par leur titre, tableau avec légende et en-têtes, groupes de boutons radio nommés'],
+	['1.3.5 Finalité des champs', 'Respecté', 'autocomplete sur le nom, le téléphone, l’e-mail et la commune'],
+	['1.4.3 Contraste (minimum)', 'Respecté', 'Chaque couleur de texte atteint au moins 4,5:1 sur les trois fonds de sa palette, dans les quatre styles'],
+	['1.4.10 Redistribution', 'Respecté', 'Aucun débordement horizontal à 320 px ; le tableau des tarifs défile dans une zone nommée, ce que le critère autorise'],
+	['1.4.11 Contraste non textuel', 'Respecté', 'Bordures de champs et anneau de focus à au moins 3:1'],
+	['1.4.12 Espacement du texte', 'Respecté', 'Aucun texte coupé ni débordant à 320, 768, 1 280 et 1 600 px'],
+	['2.1.1 Clavier', 'Respecté', 'Toutes les commandes s’utilisent au clavier ; onglets conformes au modèle ARIA (flèches, Début, Fin)'],
+	['2.4.1 Contourner des blocs', 'Dépend du thème', 'Le lien « Aller au contenu » est fourni par WordPress et le thème'],
+	['2.4.2 Titre de page', 'Respecté', 'Après un envoi en erreur, le titre de la page commence par « Erreur : »'],
+	['2.4.3 Parcours du focus', 'Respecté', 'Ordre de tabulation identique à l’ordre de lecture'],
+	['2.4.6 En-têtes et étiquettes', 'Respecté (dépend du site)', 'Étiquettes visibles sur tous les champs ; la pertinence des titres saisis dépend du rédacteur'],
+	['2.4.7 Visibilité du focus', 'Respecté', 'Anneau de 3 px, décalé de 3 px, sur toutes les commandes, au clavier seulement'],
+	['2.4.11 Focus non masqué', 'Respecté', 'Aucun élément fixe ne recouvre le focus'],
+	['2.5.8 Taille des cibles', 'Respecté', 'Toutes les cibles font au moins 24 px, sauf le lien « Accueil » du fil d’Ariane (23 px), conforme par l’exception d’espacement'],
+	['3.3.1 Identification des erreurs', 'Respecté', 'Récapitulatif des erreurs avec liens vers chaque champ, champs en erreur annoncés avec leur message'],
+	['3.3.2 Étiquettes ou instructions', 'Respecté', 'Champs obligatoires annoncés, aide reliée à chaque champ'],
+	['3.3.3 Suggestion après une erreur', 'Respecté', 'Messages concrets, par exemple « l’adresse doit contenir un @ et un domaine »'],
+	['4.1.2 Nom, rôle et valeur', 'Respecté', 'Accordéon « réduit / développé », onglets « sélectionné, 1 sur 4 », états vérifiés avec NVDA'],
+	['4.1.3 Messages d’état', 'Respecté', 'Après l’envoi d’un formulaire, le focus va sur l’erreur ou sur la confirmation'],
+];
+
+const fixes = [
+	['Tous (couleurs)', '10 couleurs de texte sous 4,5:1 sur le fond le plus foncé ou le plus clair de leur palette', 'Couleurs ajustées dans le code et la maquette Figma'],
+	['Pied de page', 'Débordement horizontal avec un espacement de texte augmenté', 'Colonnes contraintes, retour à la ligne des adresses longues'],
+	['Héro', 'Débordement du grand titre à 320 px', 'Grille contrainte, césure autorisée'],
+	['Héro', 'Les deux lignes du titre lues collées par le lecteur d’écran', 'Titre complet fourni d’un seul tenant'],
+	['Formulaire de contact', '« Obligatoire » non annoncé sur les champs', 'Champs marqués obligatoires'],
+	['Formulaire de contact', 'Groupe « Type de travaux » annoncé invalide avant tout envoi', 'Pas d’état d’erreur prématuré, groupe nommé par sa légende'],
+	['Onglets', 'Liste d’onglets sans nom', 'Liste nommée par le titre de la section'],
+	['Lettre', 'Erreur et confirmation non annoncées après l’envoi', 'Focus placé sur l’erreur ou la confirmation'],
+	['Lettre, contact', 'Erreur annoncée pendant la saisie de l’e-mail', 'Erreur signalée seulement après l’envoi'],
+];
+---
+
+<Prose
+	title="Accessibilité"
+	description="Déclaration d’accessibilité de Saina Blocks : audit WCAG 2.2 AA, résultats par critère, corrections et limites connues."
+	updated="26 novembre 2026"
+>
+	<h2>Résumé</h2>
+	<p>
+		La version 0.3.1 de <strong>Saina Blocks</strong> ne présente aucune non-conformité connue au niveau AA des WCAG 2.2 sur
+		ses 20 blocs. Ce résultat vient d’un audit mené le 22 novembre 2026 : tests automatisés, navigation au clavier, calcul
+		des contrastes, redistribution à 320 px, espacement du texte augmenté et écoute avec NVDA. L’audit a relevé 10 défauts,
+		tous corrigés dans cette version.
+	</p>
+	<p>
+		Les versions suivantes ont ajouté des animations d’apparition et réparti les blocs entre la version gratuite et la
+		version Pro. Ces changements n’ont pas encore fait l’objet d’un nouvel audit complet ; ses résultats seront publiés
+		ici.
+	</p>
+	<p>
+		Cette page décrit l’accessibilité des blocs livrés. Elle ne remplace pas la déclaration du site qui les utilise : la
+		conformité finale dépend aussi du thème, des contenus et des extensions installées. Le RGAA 4.1 reprend les critères
+		WCAG 2.1 AA ; les blocs ont été conçus pour le respecter, mais aucun audit RGAA n’a été réalisé par un tiers.
+	</p>
+
+	<h2>Périmètre</h2>
+	<p>
+		Tout ce que l’extension affiche sur le site public, dans ses quatre styles de couleur (Forêt, Pierre, Crème, Clair) :
+		en-tête, pied de page, fil d’Ariane, héros, appel à l’action, chiffres clés, services, média et texte, réalisations,
+		étapes, équipe, témoignages, logos, FAQ, onglets, tableau des tarifs, formulaire de contact, inscription à la lettre et
+		coordonnées, ainsi que le modèle de page et les compositions fournies.
+	</p>
+	<p>
+		Hors périmètre : l’interface d’édition de WordPress, le thème actif, les contenus saisis et les services tiers, comme la
+		carte OpenStreetMap du bloc Coordonnées.
+	</p>
+
+	<h2>Méthode</h2>
+	<p>
+		Windows, Brave (Chromium), WordPress 7.1 avec Twenty Twenty-Five, contrôle des contrastes, de la mise en page et du focus
+		repris avec Twenty Twenty-Four. NVDA 2026.3.1. Parcours complet à la touche Tab (98 éléments), mesure de chaque cible,
+		lecture de l’arbre d’accessibilité du navigateur.
+	</p>
+
+	<h2>Résultats par critère</h2>
+	<div class="table-scroll" role="region" aria-labelledby="t-resultats" tabindex="0">
+		<table>
+			<caption id="t-resultats" class="visually-hidden">Résultat de l’audit pour chaque critère WCAG 2.2 testé</caption>
+			<thead>
+				<tr><th scope="col">Critère</th><th scope="col">Résultat</th><th scope="col">Constat</th></tr>
+			</thead>
+			<tbody>
+				{results.map(([criterion, result, note]) => (
+					<tr><th scope="row">{criterion}</th><td>{result}</td><td>{note}</td></tr>
+				))}
+			</tbody>
+		</table>
+	</div>
+	<p>Les blocs respectent aussi la préférence « réduire les animations » du système et le mode de contraste élevé de Windows.</p>
+
+	<h2>Corrections apportées en 0.3.1</h2>
+	<div class="table-scroll" role="region" aria-labelledby="t-corrections" tabindex="0">
+		<table>
+			<caption id="t-corrections" class="visually-hidden">Défauts relevés pendant l’audit et leur correction</caption>
+			<thead>
+				<tr><th scope="col">Bloc</th><th scope="col">Défaut</th><th scope="col">Correction</th></tr>
+			</thead>
+			<tbody>
+				{fixes.map(([block, issue, fix]) => (
+					<tr><th scope="row">{block}</th><td>{issue}</td><td>{fix}</td></tr>
+				))}
+			</tbody>
+		</table>
+	</div>
+
+	<h2>Limites connues</h2>
+	<h3>À la charge de l’intégrateur ou du rédacteur</h3>
+	<ul>
+		<li>Rédiger un texte alternatif pour chaque image porteuse d’information, et le laisser vide pour une image décorative.</li>
+		<li>Garder une hiérarchie de titres logique : un seul bloc Héro par page, car il porte le titre de niveau 1.</li>
+		<li>Vérifier le contraste de toute couleur personnalisée qui remplace celles du kit.</li>
+		<li>Choisir un thème dont le lien « Aller au contenu » a un focus visible. Celui de Twenty Twenty-Five n’en affiche pas.</li>
+		<li>Pour une lettre reliée à un service externe, vérifier l’accessibilité des pages de ce service.</li>
+		<li>Donner un titre explicite à la carte du bloc Coordonnées et proposer l’adresse en texte à côté.</li>
+	</ul>
+	<h3>Non testé à ce jour</h3>
+	<ul>
+		<li>JAWS, VoiceOver (macOS et iOS) et TalkBack.</li>
+		<li>Firefox et Safari.</li>
+		<li>Mobile tactile avec un lecteur d’écran.</li>
+		<li>Audit par un auditeur RGAA indépendant.</li>
+	</ul>
+
+	<h2>Ce site</h2>
+	<p>
+		Le site saina-studio.com suit les mêmes règles (contrastes AA, navigation au clavier, focus visible, animations coupées si
+		vous le demandez à votre système), sans audit formel pour l’instant.
+	</p>
+
+	<h2>Signaler un problème</h2>
+	<p>
+		Décrivez la page, le bloc, le navigateur et l’aide technique utilisés. Chaque signalement reçoit une réponse et, s’il est
+		confirmé, une correction dans une prochaine version :
+		<a href={`mailto:${site.email}?subject=Accessibilit%C3%A9`}>{site.email}</a>.
+	</p>
+</Prose>

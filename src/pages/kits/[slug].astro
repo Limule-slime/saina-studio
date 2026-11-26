@@ -1,0 +1,679 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Title from '../../components/Title.astro';
+import DemoPreview from '../../components/DemoPreview.astro';
+import Pricing from '../../components/Pricing.tsx';
+import { freemius, site } from '../../data/site';
+
+export async function getStaticPaths() {
+	const kits = await getCollection('kits', (kit) => kit.data.status === 'available');
+	return kits.map((kit) => ({ params: { slug: kit.id }, props: { kit } }));
+}
+
+interface Props {
+	kit: CollectionEntry<'kits'>;
+}
+
+const { kit } = Astro.props;
+const k = kit.data;
+const upcoming = (await getCollection('kits', (other) => other.id !== kit.id)).sort((a, b) => a.data.order - b.data.order);
+const figmaVariables = [
+	{ name: 'color/bg/default', hex: '#132019', css: '--sn-color-bg-default' },
+	{ name: 'color/bg/subtle', hex: '#1B2B22', css: '--sn-color-bg-subtle' },
+	{ name: 'color/text/primary', hex: '#F3EEE8', css: '--sn-color-text-primary' },
+	{ name: 'color/text/muted', hex: '#93A493', css: '--sn-color-text-muted' },
+	{ name: 'color/text/brand', hex: '#EA8470', css: '--sn-color-text-brand' },
+	{ name: 'color/border/strong', hex: '#4E6656', css: '--sn-color-border-strong' },
+];
+---
+
+<Base title={k.name} description={k.summary} current={k.name}>
+	<!-- Hero -->
+	<section class="hero wrap" aria-labelledby="kit-title">
+		{
+			k.badge && (
+				<p class="badge glass label" data-reveal>
+					<span class="dot" aria-hidden="true" />
+					{k.badge}
+				</p>
+			)
+		}
+		<Title as="h1" id="kit-title" class="h-1 hero-title" text={k.title ?? k.name} accent={k.titleAccent} />
+		{k.intro && <p class="lead hero-lead" data-reveal="0.15">{k.intro}</p>}
+		<div class="btn-row hero-cta" data-reveal="0.25">
+			<a class="btn btn--light" href="#tarifs">Télécharger la version gratuite</a>
+			{k.demoUrl ? <a class="btn btn--ghost" href={k.demoUrl}>Voir la démo ↗</a> : <a class="btn btn--ghost" href="#tarifs">Voir les tarifs</a>}
+		</div>
+		<ul class="meta label" role="list" data-reveal="0.35">
+			{k.meta.map((m) => <li>{m}</li>)}
+		</ul>
+	</section>
+
+	{
+		k.preview && (
+			<section class="wrap demo" aria-label="Aperçu de la démo">
+				<DemoPreview preview={k.preview}>
+					<figcaption class="label demo-caption">
+						Démo réelle construite uniquement avec {k.name}. Palette Forêt.
+					</figcaption>
+				</DemoPreview>
+			</section>
+		)
+	}
+
+	<!-- Figures -->
+	<section class="wrap figures" aria-label="En chiffres">
+		<ul role="list">
+			{
+				k.figures.map((f, i) => (
+					<li class="rule-top" data-reveal={String(i * 0.08)}>
+						<p class="figure">{f.value}</p>
+						<p class="muted">{f.text}</p>
+					</li>
+				))
+			}
+		</ul>
+	</section>
+
+	<!-- Accessibility -->
+	<section class="section" id="accessibilite" aria-labelledby="a11y-title">
+		<div class="wrap split">
+			<div class="intro">
+				<Title id="a11y-title" class="h-2" text={'Testé comme un audit,\npas comme une démo.'} accent="audit" />
+				<p class="lead">
+					Chaque bloc a été vérifié avec les outils d’un auditeur RGAA. La déclaration d’accessibilité détaille ce qui a été
+					testé, et comment.
+				</p>
+				<a class="link-arrow" href={site.accessibilityStatement}>Lire la déclaration d’accessibilité</a>
+			</div>
+			<ul class="checks" role="list">
+				{
+					k.checks.map((c) => (
+						<li class="rule-top" data-reveal>
+							<h3 class="check-name">{c.name}</h3>
+							<p class="muted">{c.text}</p>
+							<p class="label check-tag">{c.tag}</p>
+						</li>
+					))
+				}
+			</ul>
+		</div>
+	</section>
+
+	<!-- Blocks (cream) -->
+	<section class="section is-cream" aria-labelledby="blocks-title">
+		<div class="wrap">
+			<div class="blocks-head">
+				<Title id="blocks-title" class="h-2" text={'Neuf blocs gratuits.\nOnze de plus en Pro.'} accent="gratuits" />
+				<p class="lead">
+					La version gratuite suffit pour un site vitrine complet. La Pro ajoute ce qu’attendent un artisan, un cabinet ou
+					une agence : formulaire, réalisations, équipe, tarifs.
+				</p>
+			</div>
+			<div class="blocks">
+				<div class="block-col outlined">
+					<div class="block-col-head">
+						<h3 class="h-3">Gratuit</h3>
+						<p class="label">0 € · WordPress.org</p>
+					</div>
+					<ul role="list">
+						{k.freeBlocks.map((b) => <li><span class="b-name">{b.name}</span><span class="muted">{b.description}</span></li>)}
+					</ul>
+				</div>
+				<div class="block-col is-forest">
+					<div class="block-col-head">
+						<h3 class="h-3">{k.name} <span class="accent">Pro</span></h3>
+						<p class="label pro-price">dès {k.plans[0]?.annual} € / an</p>
+					</div>
+					<ul role="list">
+						{k.proBlocks.map((b) => <li><span class="b-name">{b.name}</span><span class="muted">{b.description}</span></li>)}
+					</ul>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Figma -->
+	<section class="section" aria-labelledby="figma-title">
+		<div class="wrap split split--center figma">
+			<div class="figma-text">
+				<Title id="figma-title" class="h-2" text={'La maquette Figma\nparle le même langage\nque le code.'} accent="même langage" />
+				<p class="lead">
+					Chaque couleur, espacement et rayon du kit est une variable Figma reliée à sa propriété CSS. En mode Dev, vous
+					lisez directement le nom à utiliser dans le thème.
+				</p>
+				<ul class="dash-list" role="list">
+					<li>Les 20 sections, en composants</li>
+					<li>4 palettes, en modes de variables</li>
+					<li>Pages exemples et notes d’accessibilité</li>
+				</ul>
+			</div>
+			<figure class="vars glass" data-reveal>
+				<figcaption class="vars-head">
+					<span>Variables · Couleurs</span>
+					<span class="modes" aria-hidden="true">
+						<span class="is-on">Forêt</span><span>Pierre</span><span>Crème</span><span>Clair</span>
+					</span>
+				</figcaption>
+				<table>
+					<caption class="visually-hidden">Extrait des variables de couleur du kit Figma, palette Forêt</caption>
+					<thead class="visually-hidden">
+						<tr><th scope="col">Variable Figma</th><th scope="col">Valeur</th><th scope="col">Propriété CSS</th></tr>
+					</thead>
+					<tbody>
+						{
+							figmaVariables.map((v) => (
+								<tr>
+									<th scope="row">
+										<span class="swatch" style={`background:${v.hex}`} aria-hidden="true" />
+										{v.name}
+									</th>
+									<td class="mono">{v.hex}</td>
+									<td class="mono css">var({v.css})</td>
+								</tr>
+							))
+						}
+					</tbody>
+				</table>
+			</figure>
+		</div>
+	</section>
+
+	<!-- Pricing -->
+	<section class="section" id="tarifs" aria-labelledby="pricing-title">
+		<div class="wrap pricing-wrap">
+			<Title id="pricing-title" class="h-2 center" text={'Un prix clair,\nsans abonnement caché.'} accent="clair" />
+			<Pricing
+				client:visible
+				plans={k.plans}
+				freeUrl={k.freeUrl}
+				freeFeatures={['9 blocs accessibles', 'Palettes et animations', 'Support sur le forum']}
+				checkout={freemius}
+				supportEmail={site.email}
+			/>
+			<p class="label reassure">Paiement sécurisé par Freemius · TVA gérée pour vous · Remboursé sous 14 jours</p>
+		</div>
+	</section>
+
+	<!-- FAQ -->
+	<section class="section" aria-labelledby="faq-title">
+		<div class="wrap split">
+			<div class="intro">
+				<Title id="faq-title" class="h-2" text="Avant d’installer." accent="installer." />
+				<p class="lead">
+					Une autre question ? <a class="link-arrow" href={`mailto:${site.email}`}>Écrivez-moi</a>, je réponds moi-même
+					sous 48 h ouvrées.
+				</p>
+			</div>
+			<div class="faq">
+				{
+					k.faq.map((item, i) => (
+						<details class="rule-top" open={i === 0}>
+							<summary>
+								<h3>{item.question}</h3>
+							</summary>
+							<p class="muted">{item.answer}</p>
+						</details>
+					))
+				}
+			</div>
+		</div>
+	</section>
+
+	<!-- Next kits -->
+	<section class="section" aria-labelledby="next-title">
+		<div class="wrap">
+			<div class="next-head">
+				<Title id="next-title" class="h-2" text={'Les prochains kits\ndu studio.'} accent="prochains" />
+				<a class="btn btn--ghost" href="/#lettre">Être prévenu</a>
+			</div>
+			<ul class="next" role="list">
+				{
+					upcoming.map((u) => (
+						<li class:list={[u.data.status === 'available' ? 'glass' : 'outlined']}>
+							<p class="label status">
+								<span class:list={['dot', { 'is-off': u.data.status !== 'available' }]} aria-hidden="true" />
+								{u.data.status === 'available' ? 'Disponible' : 'En préparation'}
+							</p>
+							<h3 class="next-name">{u.data.name}</h3>
+							<p class="muted">{u.data.summary}</p>
+						</li>
+					))
+				}
+			</ul>
+		</div>
+	</section>
+
+	<!-- Final call -->
+	<section class="section final wrap" aria-labelledby="final-title">
+		<Title id="final-title" class="h-1 center" text={'Un site que tout le monde\npeut utiliser, dès ce soir.'} accent="tout le monde" />
+		<div class="btn-row center-row">
+			<a class="btn btn--light" href="#tarifs">Télécharger la version gratuite</a>
+			<a class="btn btn--ghost" href="#tarifs">Acheter la Pro</a>
+		</div>
+	</section>
+</Base>
+
+<style>
+	.hero {
+		display: grid;
+		justify-items: center;
+		gap: 2rem;
+		padding-top: clamp(4rem, 2rem + 6vw, 7.5rem);
+		text-align: center;
+	}
+
+	.badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.6rem;
+		padding: 0.5rem 1rem 0.5rem 0.875rem;
+		border-radius: var(--sn-radius-pill);
+		color: var(--sn-color-text-primary);
+	}
+
+	.dot {
+		width: 0.45rem;
+		aspect-ratio: 1;
+		border-radius: 50%;
+		background: var(--sn-color-status-ok);
+	}
+
+	.dot.is-off {
+		background: var(--sn-color-text-muted);
+		opacity: 0.5;
+	}
+
+	:global(.hero-title) {
+		max-width: 16ch;
+	}
+
+	.hero-lead {
+		max-width: 40rem;
+	}
+
+	.hero-cta {
+		justify-content: center;
+	}
+
+	.meta {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.5rem 1.75rem;
+		padding: 0;
+		list-style: none;
+	}
+
+	.demo {
+		margin-top: clamp(3rem, 2rem + 3vw, 4.5rem);
+	}
+
+	.demo-caption {
+		margin-top: 1rem;
+		padding-left: 0.25rem;
+		text-transform: none;
+		letter-spacing: 0.02em;
+	}
+
+	.figures ul {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 2rem 1rem;
+		margin-top: clamp(4.5rem, 3rem + 4vw, 7.5rem);
+		padding: 0;
+		list-style: none;
+	}
+
+	.figures li {
+		display: grid;
+		gap: 0.9rem;
+		padding-top: 1.75rem;
+		padding-right: 1rem;
+	}
+
+	.figures li p:last-child {
+		font-size: var(--sn-text-sm);
+	}
+
+	@media (min-width: 60rem) {
+		.figures ul {
+			grid-template-columns: repeat(4, 1fr);
+		}
+	}
+
+	.intro {
+		display: grid;
+		align-content: start;
+		gap: 1.75rem;
+	}
+
+	.checks,
+	.faq {
+		padding: 0;
+		list-style: none;
+	}
+
+	.checks li {
+		display: grid;
+		gap: 0.5rem 2rem;
+		padding-block: 1.6rem;
+	}
+
+	.check-name {
+		font-size: var(--sn-text-xl);
+		font-weight: 500;
+		letter-spacing: -0.01em;
+	}
+
+	.check-tag {
+		text-transform: none;
+		letter-spacing: 0.02em;
+	}
+
+	@media (min-width: 48rem) {
+		.checks li {
+			grid-template-columns: 12rem 1fr 8rem;
+		}
+
+		.check-tag {
+			text-align: right;
+		}
+	}
+
+	.blocks-head {
+		display: grid;
+		gap: 1.5rem 4rem;
+		align-items: end;
+		margin-bottom: 3.5rem;
+	}
+
+	@media (min-width: 60rem) {
+		.blocks-head {
+			grid-template-columns: 38rem 1fr;
+		}
+	}
+
+	.blocks {
+		display: grid;
+		gap: 1.5rem;
+	}
+
+	@media (min-width: 60rem) {
+		.blocks {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	.block-col {
+		padding: 2rem 2rem 1.5rem;
+		border-radius: var(--sn-radius-lg);
+	}
+
+	.block-col-head {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 0.25rem 1rem;
+		padding-bottom: 1.5rem;
+	}
+
+	.pro-price {
+		color: var(--sn-color-text-brand);
+	}
+
+	.block-col ul {
+		padding: 0;
+		list-style: none;
+	}
+
+	.block-col li {
+		display: grid;
+		gap: 0.15rem 1rem;
+		padding-block: 0.85rem;
+		border-top: 1px solid var(--sn-color-border-default);
+		font-size: var(--sn-text-sm);
+	}
+
+	.b-name {
+		font-size: var(--sn-text-md);
+		font-weight: 500;
+	}
+
+	@media (min-width: 36rem) {
+		.block-col li {
+			grid-template-columns: 13.5rem 1fr;
+			align-items: baseline;
+		}
+	}
+
+	.figma-text {
+		display: grid;
+		gap: 1.75rem;
+	}
+
+	@media (min-width: 60rem) {
+		.figma {
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		}
+
+		.figma-text {
+			order: 2;
+		}
+	}
+
+	.dash-list {
+		display: grid;
+		gap: 0.6rem;
+		padding: 0;
+		list-style: none;
+	}
+
+	.dash-list li::before {
+		content: '';
+		display: inline-block;
+		width: 0.875rem;
+		height: 1px;
+		margin-right: 0.75rem;
+		vertical-align: middle;
+		background: var(--sn-color-text-brand);
+	}
+
+	.vars {
+		padding: 1.5rem;
+		border-radius: var(--sn-radius-lg);
+	}
+
+	.vars-head {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: 0.75rem;
+		margin-bottom: 0.75rem;
+		font-size: var(--sn-text-sm);
+		font-weight: 500;
+	}
+
+	.modes {
+		display: flex;
+		gap: 0.375rem;
+	}
+
+	.modes span {
+		padding: 0.2rem 0.6rem;
+		border-radius: var(--sn-radius-pill);
+		background: rgb(255 255 255 / 0.06);
+		font-size: 0.6875rem;
+		font-weight: 400;
+		color: var(--sn-color-text-muted);
+	}
+
+	.modes .is-on {
+		background: var(--sn-color-text-primary);
+		color: var(--sn-color-bg-default);
+	}
+
+	.vars table {
+		width: 100%;
+		border-collapse: collapse;
+	}
+
+	.vars th,
+	.vars td {
+		padding: 0.6rem 0.25rem;
+		font-size: 0.8125rem;
+		font-weight: 400;
+		text-align: left;
+	}
+
+	.vars th {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.swatch {
+		width: 1.375rem;
+		aspect-ratio: 1;
+		border: 1px solid rgb(255 255 255 / 0.15);
+		border-radius: 0.375rem;
+	}
+
+	.mono {
+		font-family: var(--sn-font-mono);
+		font-size: 0.6875rem;
+		color: var(--sn-color-text-muted);
+	}
+
+	.css {
+		text-align: right;
+		color: var(--sn-color-text-brand);
+	}
+
+	@media (max-width: 35.99rem) {
+		.css {
+			display: none;
+		}
+	}
+
+	.pricing-wrap {
+		display: grid;
+		justify-items: center;
+		gap: 3rem;
+	}
+
+	.reassure {
+		text-align: center;
+		text-transform: none;
+		letter-spacing: 0.02em;
+	}
+
+	.faq details {
+		padding-block: 1.5rem;
+	}
+
+	.faq details:last-child {
+		border-bottom: 1px solid var(--sn-color-border-default);
+	}
+
+	.faq summary {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 1.5rem;
+		list-style: none;
+		cursor: pointer;
+	}
+
+	.faq summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.faq summary::after {
+		content: '+';
+		font-size: 1.5rem;
+		line-height: 1;
+		color: var(--sn-color-text-muted);
+	}
+
+	.faq details[open] summary::after {
+		content: '−';
+	}
+
+	.faq summary h3 {
+		font-size: var(--sn-text-xl);
+		font-weight: 500;
+		letter-spacing: -0.01em;
+	}
+
+	.faq details p {
+		max-width: 40rem;
+		margin-top: 1rem;
+	}
+
+	.next-head {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		align-items: end;
+		gap: 1.5rem;
+		margin-bottom: 2.5rem;
+	}
+
+	.next {
+		display: grid;
+		gap: 1rem;
+		padding: 0;
+		list-style: none;
+	}
+
+	@media (min-width: 48rem) {
+		.next {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (min-width: 72rem) {
+		.next {
+			grid-template-columns: repeat(4, 1fr);
+		}
+	}
+
+	.next li {
+		display: grid;
+		align-content: start;
+		gap: 0.4rem;
+		padding: 1.5rem;
+		border-radius: var(--sn-radius-md);
+	}
+
+	.status {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin-bottom: 2rem;
+	}
+
+	.next-name {
+		font-size: var(--sn-text-xl);
+		font-weight: 500;
+		letter-spacing: -0.02em;
+	}
+
+	.next li p:last-child {
+		font-size: var(--sn-text-sm);
+	}
+
+	.final {
+		display: grid;
+		justify-items: center;
+		gap: 2rem;
+		padding-top: calc(var(--sn-space-section) * 1.2);
+	}
+
+	.center-row {
+		justify-content: center;
+	}
+</style>

@@ -1,0 +1,59 @@
+/*
+ * Saina Studio — design tokens.
+ * Same names as the Saina Blocks kit (--sn-*), so the site doubles as
+ * a showcase of the system it sells.
+ */
+:root {
+	/* Colour — dark base */
+	--sn-color-bg-default: #0b0d0c;
+	--sn-color-bg-raised: rgb(255 255 255 / 0.04);
+	--sn-color-bg-raised-strong: rgb(255 255 255 / 0.07);
+	--sn-color-text-primary: #f2f2f0;
+	--sn-color-text-muted: #a8ada8;
+	--sn-color-text-brand: #ea8470;
+	--sn-color-border-default: rgb(255 255 255 / 0.1);
+	--sn-color-border-strong: rgb(255 255 255 / 0.18);
+	--sn-color-status-ok: #4ade80;
+	--sn-color-forest: #132019;
+	--sn-color-glow-forest: rgb(41 92 61 / 0.55);
+	--sn-color-glow-clay: rgb(140 69 46 / 0.18);
+
+	/* Colour — cream sections (palette Crème of the kit) */
+	--sn-color-cream-bg: #f3eee8;
+	--sn-color-cream-text: #132019;
+	--sn-color-cream-muted: #545c56;
+	--sn-color-cream-brand: #9b3b26;
+	--sn-color-cream-border: rgb(19 32 25 / 0.15);
+
+	/* Type */
+	--sn-font-sans: 'Geist Variable', system-ui, sans-serif;
+	--sn-font-mono: 'Geist Mono Variable', ui-monospace, monospace;
+	--sn-font-serif: 'Instrument Serif', Georgia, serif;
+
+	--sn-text-xs: 0.75rem;
+	--sn-text-sm: 0.875rem;
+	--sn-text-md: 1rem;
+	--sn-text-lg: clamp(1.0625rem, 0.95rem + 0.4vw, 1.1875rem);
+	--sn-text-xl: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+	--sn-text-h3: clamp(1.5rem, 1.2rem + 1vw, 1.75rem);
+	--sn-text-h2: clamp(2.25rem, 1.5rem + 2.6vw, 3.5rem);
+	--sn-text-h1: clamp(2.75rem, 1.4rem + 5.2vw, 5.75rem);
+	--sn-text-display: clamp(3rem, 1.2rem + 6.4vw, 6.5rem);
+	--sn-text-figure: clamp(3rem, 2.4rem + 2vw, 4.5rem);
+
+	/* Space & layout */
+	--sn-space-gutter: clamp(1.25rem, -1.5rem + 8.3vw, 7.5rem);
+	--sn-space-section: clamp(5.5rem, 3rem + 8vw, 10rem);
+	--sn-space-block: clamp(2rem, 1.4rem + 2vw, 4rem);
+	--sn-width-content: 75rem;
+
+	--sn-radius-sm: 0.625rem;
+	--sn-radius-md: 1.25rem;
+	--sn-radius-lg: 1.5rem;
+	--sn-radius-pill: 999px;
+
+	/* Motion */
+	--sn-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+	--sn-duration-fast: 0.2s;
+	--sn-duration-reveal: 1s;
+}

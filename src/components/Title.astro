@@ -1,0 +1,39 @@
+---
+/**
+ * Heading split into lines ("\n" in `text`), with one word set in the
+ * serif italic accent. Screen readers get the whole sentence at once.
+ */
+interface Props {
+	text: string;
+	accent?: string;
+	as?: 'h1' | 'h2' | 'h3';
+	class?: string;
+	id?: string;
+}
+
+const { text, accent, as: Tag = 'h2', class: className, id } = Astro.props;
+const lines = text.split('\n');
+
+const parts = (line: string) => {
+	if (!accent || !line.includes(accent)) return [{ text: line, accent: false }];
+	const [before, ...rest] = line.split(accent);
+	return [
+		{ text: before, accent: false },
+		{ text: accent, accent: true },
+		{ text: rest.join(accent), accent: false },
+	];
+};
+---
+
+<Tag class={className} id={id} data-reveal-lines>
+	<span class="visually-hidden">{lines.join(' ')}</span>
+	{
+		lines.map((line) => (
+			<span class="line" aria-hidden="true">
+				<span class="line-inner">
+					{parts(line).map((p) => (p.accent ? <span class="accent">{p.text}</span> : p.text))}
+				</span>
+			</span>
+		))
+	}
+</Tag>

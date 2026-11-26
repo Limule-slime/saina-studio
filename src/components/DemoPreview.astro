@@ -1,0 +1,161 @@
+---
+/** The kit's demo rendered as live text in a browser frame, not a screenshot. */
+interface Props {
+	preview: {
+		brand: string;
+		headline: string;
+		text: string;
+		cta: string;
+		caption: string;
+		links: string[];
+	};
+	url?: string;
+	compact?: boolean;
+}
+const { preview, url = 'demo.saina-studio.com', compact = false } = Astro.props;
+---
+
+<figure class:list={['browser glass', { 'is-compact': compact }]}>
+	{
+		!compact && (
+			<div class="bar" aria-hidden="true">
+				<span class="dots"><i /><i /><i /></span>
+				<span class="url">{url}</span>
+			</div>
+		)
+	}
+	<div class="screen" role="img" aria-label={`Aperçu de la démo ${preview.brand} : « ${preview.headline} »`}>
+		<div class="screen-nav" aria-hidden="true">
+			<span class="screen-brand">{preview.brand}</span>
+			{!compact && <span class="screen-links">{preview.links.map((l) => <span>{l}</span>)}</span>}
+		</div>
+		<div class="screen-hero" aria-hidden="true">
+			<p class="screen-title">{preview.headline}</p>
+			<div class="screen-side">
+				{!compact && <p>{preview.text}</p>}
+				<span class="screen-btn">{preview.cta}</span>
+			</div>
+		</div>
+		{!compact && <p class="screen-caption label" aria-hidden="true">{preview.caption}</p>}
+	</div>
+	<slot />
+</figure>
+
+<style>
+	.browser {
+		padding: 0.625rem;
+		border-radius: var(--sn-radius-lg);
+	}
+
+	.bar {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 0.25rem 0.5rem 0.625rem;
+	}
+
+	.dots {
+		display: flex;
+		gap: 0.4rem;
+	}
+
+	.dots i {
+		width: 0.5625rem;
+		aspect-ratio: 1;
+		border-radius: 50%;
+		background: rgb(255 255 255 / 0.18);
+	}
+
+	.url {
+		flex: 1;
+		padding: 0.3rem;
+		border: 1px solid var(--sn-color-border-default);
+		border-radius: var(--sn-radius-pill);
+		font-family: var(--sn-font-mono);
+		font-size: 0.6875rem;
+		color: var(--sn-color-text-muted);
+		text-align: center;
+	}
+
+	.screen {
+		display: flex;
+		flex-direction: column;
+		gap: clamp(2.5rem, 1rem + 5vw, 6rem);
+		padding: clamp(1.25rem, 0.5rem + 3vw, 3rem);
+		border-radius: 1rem;
+		background: var(--sn-color-forest);
+		color: #f3eee8;
+	}
+
+	.is-compact .screen {
+		height: 100%;
+		justify-content: space-between;
+	}
+
+	.screen-nav {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	.screen-brand {
+		font-family: var(--sn-font-serif);
+		font-size: 1.5rem;
+	}
+
+	.screen-links {
+		display: none;
+		gap: 1.5rem;
+		font-size: var(--sn-text-sm);
+		opacity: 0.8;
+	}
+
+	.screen-hero {
+		display: grid;
+		gap: 1.25rem;
+		align-items: end;
+	}
+
+	.screen-title {
+		max-width: 12ch;
+		font-family: var(--sn-font-serif);
+		font-size: clamp(3rem, 1.4rem + 5.6vw, 6.5rem);
+		line-height: 0.92;
+		letter-spacing: -0.02em;
+	}
+
+	.is-compact .screen-title {
+		font-size: clamp(2.75rem, 1.6rem + 3vw, 4.5rem);
+	}
+
+	.screen-side {
+		display: grid;
+		gap: 1rem;
+		max-width: 20rem;
+		font-size: var(--sn-text-sm);
+		opacity: 0.85;
+	}
+
+	.screen-btn {
+		justify-self: start;
+		padding: 0.7rem 1.1rem;
+		border-radius: var(--sn-radius-pill);
+		background: #ea8470;
+		color: #0b0d0c;
+		font-weight: 500;
+	}
+
+	.screen-caption {
+		color: rgb(243 238 232 / 0.6);
+	}
+
+	@media (min-width: 48rem) {
+		.screen-links {
+			display: flex;
+		}
+
+		.browser:not(.is-compact) .screen-hero {
+			grid-template-columns: 1fr auto;
+		}
+	}
+</style>
