@@ -3,7 +3,9 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import Title from '../components/Title.astro';
 import DemoPreview from '../components/DemoPreview.astro';
+import { Image } from 'astro:assets';
 import { site } from '../data/site';
+import portrait from '../assets/mirary.jpg';
 
 const kits = (await getCollection('kits')).sort((a, b) => a.data.order - b.data.order);
 const featured = kits.filter((k) => k.data.status === 'available');
@@ -119,7 +121,7 @@ const rules = [
 	<section class="section" aria-labelledby="studio-title">
 		<div class="wrap split split--center">
 			<aside class="author glass" aria-label="L’auteur" data-reveal>
-				<div class="portrait" aria-hidden="true"></div>
+				<Image class="portrait" src={portrait} alt="" widths={[88, 176]} sizes="88px" />
 				<p class="author-name">{site.author}</p>
 				<p class="label">Développeur front-end · Antananarivo</p>
 				<dl class="facts">
@@ -324,7 +326,9 @@ const rules = [
 		width: 5.5rem;
 		aspect-ratio: 1;
 		margin-bottom: 1.25rem;
+		height: auto;
 		border-radius: 50%;
+		object-fit: cover;
 		background: #33493d;
 	}
 
